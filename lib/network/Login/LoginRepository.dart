@@ -5,7 +5,7 @@ import 'package:my_ft_app/network/ApiProvider.dart';
 class LoginRepository {
   final _provider = ApiProvider();
 
-  Future<LoginResponse?> login(LoginRequest loginRequest) {
+  Future<ApiLoginResponse?> login(LoginRequest loginRequest) {
     return _provider.login(loginRequest);
   }
 }

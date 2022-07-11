@@ -12,9 +12,15 @@ abstract class LoginState extends Equatable {
 class LoginInitial extends LoginState {}
 
 class LoginLoading extends LoginState {}
+class LoginFail extends LoginState {
+  final String? errorMess;
+  const LoginFail({required this.errorMess});
+
+
+}
 
 class LoginSuccess extends LoginState {
-  final LoginResponse? loginResponse;
+  final LoginData? loginResponse;
 
   const LoginSuccess({required this.loginResponse});
 

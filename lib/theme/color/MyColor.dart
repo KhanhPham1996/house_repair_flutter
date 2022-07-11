@@ -34,6 +34,13 @@ class MyColors {
     },
   );
 
+  static const MaterialColor errorColor = MaterialColor(
+    0xFFFC0303,
+    <int, Color>{
+      100: Color(0xFFFC0303),
+    },
+  );
+
   static const MaterialColor primaryButtonColor = MaterialColor(
     0xFF00A8A4,
     <int, Color>{
