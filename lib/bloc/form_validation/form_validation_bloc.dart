@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 
-import '../../data/LoginRequest.dart';
+import '../../data/Login/LoginRequest.dart';
+
 import '../../data/form_validation/FieldError.dart';
 
 part 'form_validation_event.dart';

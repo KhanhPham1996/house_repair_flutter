@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:my_ft_app/data/LoginRequest.dart';
+
+import '../../data/Login/LoginRequest.dart';
 
 abstract class LoginEvent extends Equatable {
   const LoginEvent();
@@ -12,3 +13,5 @@ class Login extends LoginEvent {
 
   List<Object?> get props => [loginRequest];
 }
+
+

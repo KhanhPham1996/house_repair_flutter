@@ -4,7 +4,8 @@ import 'package:my_ft_app/bloc/form_validation/form_validation_bloc.dart';
 import 'package:my_ft_app/bloc/login/login_bloc.dart';
 import 'package:my_ft_app/bloc/login/login_event.dart';
 import 'package:my_ft_app/bloc/login/login_state.dart';
-import 'package:my_ft_app/data/LoginRequest.dart';
+import 'package:my_ft_app/bloc/wage/get_wage_bloc.dart';
+import '../../data/Login/LoginRequest.dart';
 import 'package:my_ft_app/theme/color/MyColor.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -18,22 +19,27 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final _loginBloc = context.read<LoginBloc>();
+    final _wageBloc = context.read<GetWageBloc>();
     final _formValidationBloc = context.read<FormValidationBloc>();
+
     String userName = "";
     String passWord = "";
     return Padding(
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: BlocBuilder<FormValidationBloc, FormValidationState>(
           builder: (context, formValidationState) {
+            print("Henry ${formValidationState.runtimeType}");
             if (formValidationState is FormCorrect) {
+              print("Henry -> Form is correct");
+              _formValidationBloc.emit(FormValidationInitial());
               _loginBloc.add(Login(
                   loginRequest: LoginRequest(
                       username: userName, password: passWord)));
             }
-
             return BlocBuilder <LoginBloc, LoginState>(
               builder: (context, loginState) {
                 return ListView(
+
                   children: [
                     const SizedBox(height: 72),
                     Image.asset(
@@ -84,8 +90,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             :  (loginState is LoginSuccess)
                             ? const Text("Login Success")
                             : Container(),
-
-
                       ],
                     ),
                     const SizedBox(height: 24),
@@ -98,6 +102,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 username: userName, password: passWord);
                             _formValidationBloc.add(FormScreenEventSubmit(
                                 loginRequest: loginRequest));
+                            if(loginState is LoginSuccess){
+                              _wageBloc.add(GetWage());
+                            }
                           }),
                     )
                   ],

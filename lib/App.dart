@@ -4,7 +4,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_ft_app/UI/LoginScreen.dart';
 import 'package:my_ft_app/bloc/form_validation/form_validation_bloc.dart';
 import 'package:my_ft_app/bloc/login/login_bloc.dart';
+import 'package:my_ft_app/bloc/wage/get_wage_bloc.dart';
+import 'package:my_ft_app/network/ApiProvider.dart';
 import 'package:my_ft_app/network/Login/LoginRepository.dart';
+import 'package:my_ft_app/network/Wage/WageRepository.dart';
 import 'package:my_ft_app/theme/color/MyColor.dart';
 
 class MyApp extends StatelessWidget {
@@ -15,45 +18,52 @@ class MyApp extends StatelessWidget {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
       statusBarColor: Colors.transparent, // optional
     ));
-    return RepositoryProvider(
-      create: (context) => LoginRepository(),
-      child: MultiBlocProvider(
+    return MultiRepositoryProvider(
+      providers: [
+        RepositoryProvider<ApiProvider>(create: (context) => ApiProvider()),
+      ],
+      child: MultiRepositoryProvider(
         providers: [
-          BlocProvider<LoginBloc>(
-            create: (context) => LoginBloc(
-              loginRepository: context.read<LoginRepository>(),
-            )
-          ),
-          BlocProvider<FormValidationBloc>(
-              create: (context) => FormValidationBloc(
-              )
-          ),
+          RepositoryProvider<LoginRepository>(
+              create: (context) =>
+                  LoginRepository(context.read<ApiProvider>())),
+          RepositoryProvider<WageRepository>(
+              create: (context) => WageRepository(context.read<ApiProvider>())),
         ],
-        child:   MaterialApp(
-          title: "MyApp",
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-              scaffoldBackgroundColor: Colors.white,
-              primarySwatch: MyColors.primaryColor,
-              fontFamily: 'NotoSan'
-          ),
-          home: Scaffold(
-            appBar: AppBar(
-              elevation: 0,
-              backgroundColor: Colors.white,
-              toolbarHeight: 0,
-              systemOverlayStyle: const SystemUiOverlayStyle(
-                statusBarIconBrightness: Brightness.dark,
-                statusBarBrightness: Brightness.light,
+        child: MultiBlocProvider(
+            providers: [
+              BlocProvider<LoginBloc>(
+                  create: (context) => LoginBloc(
+                        loginRepository: context.read<LoginRepository>(),
+                      )),
+              BlocProvider<FormValidationBloc>(
+                  create: (context) => FormValidationBloc()),
+              BlocProvider<GetWageBloc>(
+                  create: (context) => GetWageBloc(
+                        wageRepository: context.read<WageRepository>(),
+                      )),
+            ],
+            child: MaterialApp(
+              title: "MyApp",
+              debugShowCheckedModeBanner: false,
+              theme: ThemeData(
+                  scaffoldBackgroundColor: Colors.white,
+                  primarySwatch: MyColors.primaryColor,
+                  fontFamily: 'NotoSan'),
+              home: Scaffold(
+                appBar: AppBar(
+                  elevation: 0,
+                  backgroundColor: Colors.white,
+                  toolbarHeight: 0,
+                  systemOverlayStyle: const SystemUiOverlayStyle(
+                    statusBarIconBrightness: Brightness.dark,
+                    statusBarBrightness: Brightness.light,
+                  ),
+                ),
+                body: LoginScreen(),
               ),
-            ),
-            body: LoginScreen(),
-
-          ),
-        )
+            )),
       ),
     );
-
-
   }
 }

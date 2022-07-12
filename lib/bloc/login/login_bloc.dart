@@ -1,30 +1,44 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_ft_app/bloc/login/login_event.dart';
 import 'package:my_ft_app/bloc/login/login_state.dart';
+import 'package:my_ft_app/storage/SecureStorage.dart';
 
 import '../../network/Login/LoginRepository.dart';
+import '../../storage/StorageItem.dart';
+import '../../storage/StorageKey.dart';
 
 class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final LoginRepository loginRepository;
+  final SecureStorage _storageService = SecureStorage();
 
   LoginBloc({required this.loginRepository}) : super(LoginInitial()) {
     on<Login>((event, emit) async {
       try {
-        emit(LoginLoading());
+          emit(LoginLoading());
 
-        final response = await loginRepository.login(event.loginRequest);
-        if (response != null && response.success == true) {
-          emit(LoginSuccess(loginResponse: response.data));
-        } else if (response != null && response.success == false) {
-          {
-            emit(LoginFail(errorMess: response.message));
+          final response = await loginRepository.login(event.loginRequest);
+          if (response != null && response.success == true) {
+            _storageService.deleteAllSecureData();
+            if (response.data?.accessToken != null) {
+              var accessToken = response.data?.accessToken;
+              _storageService.writeSecureData(
+                  StorageItem(StorageKey.JWT.value, accessToken!));
+            }
+
+            emit(LoginSuccess(loginResponse: response.data));
+            var a = await _storageService.readAllSecureData();
+            print("Henry: List Storage: $a ");
+          } else if (response != null && response.success == false) {
+            {
+              emit(LoginFail(errorMess: response.message));
+            }
+          } else {
+            emit(LoginFail(errorMess: response?.error));
           }
-        } else {
-          emit(LoginFail(errorMess: response?.error));
+        } catch (e) {
+          emit(LoginFail(errorMess: e.toString()));
         }
-      } catch (e) {
-        emit(LoginFail(errorMess: e.toString()));
-      }
-    });
+      },
+    );
   }
 }

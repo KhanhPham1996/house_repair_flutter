@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:my_ft_app/data/LoginResponse.dart';
+import 'package:my_ft_app/data/Login/LoginResponse.dart';
 
 abstract class LoginState extends Equatable {
   const LoginState();
