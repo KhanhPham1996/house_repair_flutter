@@ -1,7 +1,7 @@
 part of 'get_wage_bloc.dart';
 
 @immutable
-abstract class GetWageState {
+abstract class GetWageState extends Equatable  {
   const GetWageState();
 
   @override

@@ -1,7 +1,7 @@
 part of 'get_wage_bloc.dart';
 
 @immutable
-abstract class GetWageEvent {
+abstract class GetWageEvent extends Equatable   {
   const GetWageEvent();
 }
 
