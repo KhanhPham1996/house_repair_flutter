@@ -86,7 +86,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         (loginState is LoginLoading)
                             ? const CircularProgressIndicator()
                             :  (loginState is LoginFail)
-                            ? const Text("Login Fail")
+                            ? const showAlertDialog()
                             :  (loginState is LoginSuccess)
                             ? const Text("Login Success")
                             : Container(),
@@ -182,6 +182,24 @@ class MyTextBtn extends StatelessWidget {
           textStyle:
           const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
       child: Text(text),
+    );
+  }
+}
+
+
+class MyDialog extends StatefulWidget {
+  @override
+  State<StatefulWidget> createState() {
+    return _MyDialogState();
+  }
+}
+
+class _MyDialogState  extends  State<MyDialog> {
+  @override
+  Widget build(BuildContext context) {
+    // TODO: implement build
+    return Scaffold(
+
     );
   }
 }
