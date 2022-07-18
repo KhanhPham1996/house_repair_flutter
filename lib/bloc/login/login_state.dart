@@ -15,8 +15,6 @@ class LoginLoading extends LoginState {}
 class LoginFail extends LoginState {
   final String? errorMess;
   const LoginFail({required this.errorMess});
-
-
 }
 
 class LoginSuccess extends LoginState {

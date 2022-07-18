@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_ft_app/bloc/form_validation/form_validation_bloc.dart';
 import 'package:my_ft_app/bloc/login/login_bloc.dart';
-import 'package:my_ft_app/bloc/login/login_event.dart';
-import 'package:my_ft_app/bloc/login/login_state.dart';
 import 'package:my_ft_app/bloc/wage/get_wage_bloc.dart';
-import '../../data/Login/LoginRequest.dart';
 import 'package:my_ft_app/theme/color/MyColor.dart';
+import 'package:my_ft_app/ui/HomeScreen.dart';
+
+import '../bloc/login/login_event.dart';
+import '../bloc/login/login_state.dart';
+import '../data/Login/LoginRequest.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -18,101 +21,139 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
-    final _loginBloc = context.read<LoginBloc>();
-    final _wageBloc = context.read<GetWageBloc>();
-    final _formValidationBloc = context.read<FormValidationBloc>();
+    final loginBloc = context.read<LoginBloc>();
+    final wageBloc = context.read<GetWageBloc>();
+    final formValidationBloc = context.read<FormValidationBloc>();
 
     String userName = "";
     String passWord = "";
-    return Padding(
-        padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-        child: BlocBuilder<FormValidationBloc, FormValidationState>(
-          builder: (context, formValidationState) {
-            print("Henry ${formValidationState.runtimeType}");
-            if (formValidationState is FormCorrect) {
-              print("Henry -> Form is correct");
-              _formValidationBloc.emit(FormValidationInitial());
-              _loginBloc.add(Login(
-                  loginRequest: LoginRequest(
-                      username: userName, password: passWord)));
-            }
-            return BlocBuilder <LoginBloc, LoginState>(
-              builder: (context, loginState) {
-                return ListView(
 
-                  children: [
-                    const SizedBox(height: 72),
-                    Image.asset(
-                      "assets/images/ic_app.png",
-                      width: 110,
-                      height: 110,
-                    ),
-                    const SizedBox(height: 24),
-                    Stack(
+    return Scaffold(
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: Colors.white,
+          toolbarHeight: 0,
+          systemOverlayStyle: const SystemUiOverlayStyle(
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
+        ),
+        body: Padding(
+            padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+            child: BlocConsumer<FormValidationBloc, FormValidationState>(
+              listener:  (context, formValidationState) {
+                print("Henry ${formValidationState.runtimeType}");
+                if (formValidationState is FormCorrect) {
+                  print("Henry -> Form is correct");
+                  formValidationBloc.emit(FormValidationInitial());
+                  loginBloc.add(Login(
+                      loginRequest: LoginRequest(
+                          username: userName, password: passWord)));
+                }
+              },
+              builder: (context, formValidationState) {
+
+                return BlocConsumer<LoginBloc, LoginState>(
+                  listener: (context, loginState){
+                    if(loginState is LoginSuccess){
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) =>  HomeScreen()),
+                      );
+                    }
+                  },
+                  builder: (context, loginState) {
+                    return Stack(
                       alignment: Alignment.center,
                       children: [
-                        Column(
+                        ListView(
                           children: [
-                            MyOutLineTextField(
-                              oulineSelectedColor: MyColors.primaryColor,
-                              oulineUnselectedColor: MyColors.primaryColor,
-                              hintText: "ID",
-                              onTextChange: (text) {
-                                userName = text;
-                              },
-                              errorText: (formValidationState is UserNameEmpty)
-                                  ? "Username is empty"
-                                  : null,
-                              isPasswordTextFeild: false,
+                            const SizedBox(height: 72),
+                            Image.asset(
+                              "assets/images/ic_app.png",
+                              width: 110,
+                              height: 110,
                             ),
                             const SizedBox(height: 24),
-                            MyOutLineTextField(
-                              // UserName
-                              oulineSelectedColor: MyColors.primaryColor,
-                              oulineUnselectedColor: MyColors.primaryColor,
-                              hintText: "비밀번호",
-                              onTextChange: (text) {
-                                passWord = text;
-                              },
-                              errorText: (formValidationState is PasswordEmpty)
-                                  ? "Password is empty"
-                                  : null,
-                              isPasswordTextFeild: true,
+                            Stack(
+                              alignment: Alignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    MyOutLineTextField(
+                                      oulineSelectedColor:
+                                          MyColors.primaryColor,
+                                      oulineUnselectedColor:
+                                          MyColors.primaryColor,
+                                      hintText: "ID",
+                                      onTextChange: (text) {
+                                        userName = text;
+                                      },
+                                      errorText:
+                                          (formValidationState is UserNameEmpty)
+                                              ? "Username is empty"
+                                              : null,
+                                      isPasswordTextFeild: false,
+                                    ),
+                                    const SizedBox(height: 24),
+                                    MyOutLineTextField(
+                                      // UserName
+                                      oulineSelectedColor:
+                                          MyColors.primaryColor,
+                                      oulineUnselectedColor:
+                                          MyColors.primaryColor,
+                                      hintText: "비밀번호",
+                                      onTextChange: (text) {
+                                        passWord = text;
+                                      },
+                                      errorText:
+                                          (formValidationState is PasswordEmpty)
+                                              ? "Password is empty"
+                                              : null,
+                                      isPasswordTextFeild: true,
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-
+                            const SizedBox(height: 24),
+                            Padding(
+                              padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
+                              child: MyTextBtn(
+                                  text: "로그인",
+                                  onClick: () {
+                                    LoginRequest loginRequest = LoginRequest(
+                                        username: userName, password: passWord);
+                                    formValidationBloc.add(
+                                        FormScreenEventSubmit(
+                                            loginRequest: loginRequest));
+                                    if (loginState is LoginSuccess) {
+                                      // navigate to home screen
+                                    }
+                                  }),
+                            )
                           ],
                         ),
-
                         (loginState is LoginLoading)
                             ? const CircularProgressIndicator()
-                            :  (loginState is LoginFail)
-                            ? const showAlertDialog()
-                            :  (loginState is LoginSuccess)
-                            ? const Text("Login Success")
-                            : Container(),
+                            : (loginState is LoginFail)
+                                ? MyDialog(
+                                    title: "Something went wrong",
+                                    content: (loginState.errorMess != null)
+                                        ? loginState.errorMess!
+                                        : "Something when wrong",
+                                    context: context,
+                                    onConfirmClick: () {
+                                      loginBloc.emit(LoginInitial());
+                                    },
+                                  )
+                                : Container(),
                       ],
-                    ),
-                    const SizedBox(height: 24),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
-                      child: MyTextBtn(
-                          text: "로그인",
-                          onClick: () {
-                            LoginRequest loginRequest = LoginRequest(
-                                username: userName, password: passWord);
-                            _formValidationBloc.add(FormScreenEventSubmit(
-                                loginRequest: loginRequest));
-                            if(loginState is LoginSuccess){
-                              _wageBloc.add(GetWage());
-                            }
-                          }),
-                    )
-                  ],
+                    );
+                  },
                 );
               },
-            );
-          },
-        ));
+            )));
   }
 }
 
@@ -124,13 +165,14 @@ class MyOutLineTextField extends StatefulWidget {
   final Function(String) onTextChange;
   final bool isPasswordTextFeild;
 
-  const MyOutLineTextField({Key? key,
-    required this.oulineSelectedColor,
-    required this.oulineUnselectedColor,
-    required this.hintText,
-    required this.onTextChange,
-    required this.isPasswordTextFeild,
-    this.errorText})
+  const MyOutLineTextField(
+      {Key? key,
+      required this.oulineSelectedColor,
+      required this.oulineUnselectedColor,
+      required this.hintText,
+      required this.onTextChange,
+      required this.isPasswordTextFeild,
+      this.errorText})
       : super(key: key);
 
   @override
@@ -143,7 +185,6 @@ class _MyOutLineTextFieldState extends State<MyOutLineTextField> {
     return TextFormField(
         onChanged: widget.onTextChange,
         initialValue: '',
-
         obscureText: widget.isPasswordTextFeild,
         decoration: InputDecoration(
             labelText: widget.hintText,
@@ -180,26 +221,47 @@ class MyTextBtn extends StatelessWidget {
           primary: MyColors.primaryButtonColor,
           onPrimary: Colors.white,
           textStyle:
-          const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+              const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
       child: Text(text),
     );
   }
 }
 
-
 class MyDialog extends StatefulWidget {
+  final String title, content;
+  final BuildContext context;
+  final VoidCallback onConfirmClick;
+
+  const MyDialog(
+      {Key? key,
+      required this.title,
+      required this.content,
+      required this.context,
+      required this.onConfirmClick})
+      : super(key: key);
+
   @override
   State<StatefulWidget> createState() {
     return _MyDialogState();
   }
 }
 
-class _MyDialogState  extends  State<MyDialog> {
+class _MyDialogState extends State<MyDialog> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-
+    return AlertDialog(
+      title: Text(widget.title),
+      content: Text(widget.content),
+      actions: <Widget>[
+        TextButton(
+          style: TextButton.styleFrom(
+            textStyle: const TextStyle(fontSize: 20),
+          ),
+          onPressed: widget.onConfirmClick,
+          child: const Text('Confirm'),
+        ),
+      ],
     );
   }
 }

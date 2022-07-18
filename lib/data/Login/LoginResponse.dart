@@ -1,33 +1,8 @@
-class ApiLoginResponse {
-  bool? success;
-  LoginData? data;
-  String? message;
-  String? error;
+import 'package:my_ft_app/data/BaseApiResponse.dart';
 
-  ApiLoginResponse({this.success, this.data, this.message});
 
-  ApiLoginResponse.fromJson(Map<String, dynamic> json) {
-    success = json['success'];
-    data = json['data'] != null ? new LoginData.fromJson(json['data']) : null;
-    message = json['message'];
-  }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['success'] = this.success;
-    if (this.data != null) {
-      data['data'] = this.data!.toJson();
-    }
-    data['message'] = this.message;
-    return data;
-  }
-
-  ApiLoginResponse.withError(String errorMessage) {
-    error = errorMessage;
-  }
-}
-
-class LoginData {
+class LoginData  extends Serializable{
   String? username;
   String? accessToken;
   String? tokenType;

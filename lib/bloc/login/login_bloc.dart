@@ -15,25 +15,21 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
     on<Login>((event, emit) async {
       try {
           emit(LoginLoading());
-
           final response = await loginRepository.login(event.loginRequest);
-          if (response != null && response.success == true) {
+          if (response.success == true) {
             _storageService.deleteAllSecureData();
             if (response.data?.accessToken != null) {
               var accessToken = response.data?.accessToken;
               _storageService.writeSecureData(
                   StorageItem(StorageKey.JWT.value, accessToken!));
             }
-
             emit(LoginSuccess(loginResponse: response.data));
-            var a = await _storageService.readAllSecureData();
-            print("Henry: List Storage: $a ");
-          } else if (response != null && response.success == false) {
+            await _storageService.readAllSecureData();
+          }
+          else if (response.error?.success == false &&  response.error?.message!=null) {
             {
-              emit(LoginFail(errorMess: response.message));
+              emit(LoginFail(errorMess: response.error?.message!));
             }
-          } else {
-            emit(LoginFail(errorMess: response?.error));
           }
         } catch (e) {
           emit(LoginFail(errorMess: e.toString()));

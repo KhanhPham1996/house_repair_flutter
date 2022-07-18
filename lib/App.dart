@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_ft_app/UI/LoginScreen.dart';
 import 'package:my_ft_app/bloc/form_validation/form_validation_bloc.dart';
 import 'package:my_ft_app/bloc/login/login_bloc.dart';
+import 'package:my_ft_app/bloc/login/login_event.dart';
 import 'package:my_ft_app/bloc/wage/get_wage_bloc.dart';
 import 'package:my_ft_app/network/ApiProvider.dart';
 import 'package:my_ft_app/network/Login/LoginRepository.dart';
@@ -50,18 +51,7 @@ class MyApp extends StatelessWidget {
                   scaffoldBackgroundColor: Colors.white,
                   primarySwatch: MyColors.primaryColor,
                   fontFamily: 'NotoSan'),
-              home: Scaffold(
-                appBar: AppBar(
-                  elevation: 0,
-                  backgroundColor: Colors.white,
-                  toolbarHeight: 0,
-                  systemOverlayStyle: const SystemUiOverlayStyle(
-                    statusBarIconBrightness: Brightness.dark,
-                    statusBarBrightness: Brightness.light,
-                  ),
-                ),
-                body: LoginScreen(),
-              ),
+              home:  LoginScreen(),
             )),
       ),
     );

@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:my_ft_app/network/Wage/WageRepository.dart';
 
-import '../../data/wage_table/ApiWageResponse.dart';
+import '../../data/wage_table/Wage.dart';
 
 part 'get_wage_event.dart';
 
@@ -17,14 +17,13 @@ class GetWageBloc extends Bloc<GetWageEvent, GetWageState> {
       emit(GetWageLoading());
       try {
         final response = await wageRepository.getWages();
-        if (response != null && response.success == true) {
+        if (response.success == true) {
           emit(GetWageLSuccess(wage: response.data));
-        } else if (response != null && response.success == false) {
+        } else if (response.success == false && response.error?.message!=null) {
           {
-            emit(GetWageFail(errorMess: response.message));
+            emit(GetWageFail(errorMess: response.error?.message));
           }
-        } else {
-          emit(GetWageFail(errorMess: response?.error));
+
         }
       } catch (e) {
         emit(GetWageFail(errorMess: e.toString()));
